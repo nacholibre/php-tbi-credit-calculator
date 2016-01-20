@@ -10,7 +10,7 @@ class TBICreditCalculator {
         for ($i = 3; $i <= 36; $i++) {
             $taksa = 0.00;
             if ($i >= 4 && $i <= 11) {
-                $taksa = 0.06;
+                $taksa = 0.006;
             } else if($i >= 12 && $i <= 36) {
                 $taksa = 0.012;
             }
@@ -21,10 +21,10 @@ class TBICreditCalculator {
         $zastrahovatelnaPremiqProcentMesec = Array(
             '0' => Array(0.00, 0.00), //bez zastrahovka (do 65 god, nad 65 god),
             '1' => Array(0.0039, 0.00), //zastrahovka jivot (do 65 god, nad 65 god),
-            '2' => Array(0.0040, 0.0040), //imushtestvo (do 65 god, nad 65 god),
-            '3' => Array(0.0067, 0.000), //jivot i imushtestvo (do 65 god, nad 65 god),
+            '2' => Array(0.003978, 0.003978), //imushtestvo (do 65 god, nad 65 god),
+            '3' => Array(0.006666, 0.000), //jivot i imushtestvo (do 65 god, nad 65 god),
             '4' => Array(0.0066, 0.000), //jivot i bezrabotica (do 65 god, nad 65 god),
-            '5' => Array(0.0106, 0.000), //jivot i bezrabotica i imushtestvo (do 65 god, nad 65 god),
+            '5' => Array(0.010578, 0.000), //jivot i bezrabotica i imushtestvo (do 65 god, nad 65 god),
         );
 
         $this->options = Array(
@@ -32,62 +32,6 @@ class TBICreditCalculator {
             'taksaOcenkaNaRiska' => $taksaOcenkaRiska,
             'zastrahovatelnaPremiq' => $zastrahovatelnaPremiqProcentMesec,
         );
-    }
-
-    public function ceiling($x, $c){
-        // $x is variable
-        // $c is ceiling multiple
-        $a = $x/$c ;
-        $b = (int)$a ;
-        if ($a == $b)
-            return $x ;  // x is already a multiple of c;
-        else{
-            if ($x >= 0)
-                return ($b + 1) * $c;
-            else
-                return ($b - 1) * $c;
-        }
-    }
-
-    public function pmt($i, $n, $p){
-        return $i * $p * pow((1 + $i), $n) / (1 - pow((1 + $i), $n));
-    }
-
-    public function calcLihva($total, $first = 0){
-        $lihva6  = 0.35;
-        $lihva12 = 0.2145;
-
-        $lihva = 0.35;
-
-        $lihva6  = $lihva;
-
-        $ceilx = 0.05;
-        $size  = array(3, 6,12,24,36);
-        $plan  = array();
-
-        if ($first >= $total)
-            $first = (int) ($total * 0.10);
-
-        $loan  = $total - $first;
-
-        foreach($size as $period){
-            $lihva1 = $period < 12 ? $lihva6 : $lihva12;
-            //$lihva1 = 0.4621;
-
-            $monthlyPayment = $this->ceiling(round($this->pmt( $lihva1 / 12, $period, - $loan), 2), $ceilx);
-
-            $totalLeasingPrice = $monthlyPayment * $period;
-            $oskupqvane = $totalLeasingPrice - $loan;
-
-            $plan[$period] = array(
-                'period' => $period,
-                'monthlyPayment' => $monthlyPayment,
-                'totalLeasingPrice' => $totalLeasingPrice,
-                'oskupqvane' => $oskupqvane,
-            );
-        }
-
-        return $plan;
     }
 
 	/**
@@ -329,26 +273,26 @@ class TBICreditCalculator {
 
         $monthlyPayment = $obshtaSuma/$months;
 
-        $oskupqvane = $obshtaSuma/$total-1;
+        $oskupqvane = $obshtaSuma/($total-$first+$zastrahovkaProcent*$months*$total)-1;
 
         $procentOcenkaRisk = $this->options['taksaOcenkaNaRiska'][$months];
 
-        $taksaOcenkaNaRiska = ($total-$first+$zastrahovkaProcent*$months*$total)*$procentOcenkaRisk*10;
+        $taksaOcenkaNaRiska = ($total-$first+$zastrahovkaProcent*$months*$total)*(($procentOcenkaRisk*1000)/100);
 
         $razmerCredit = $total-$first+$zastrahovkaProcent * $months*$total+$taksaOcenkaNaRiska;
 
-        $glp = $this->rate($months, $monthlyPayment, $razmerCredit)*$months;
+        $glp = $this->rate($months, $monthlyPayment, $razmerCredit)*12;
 
         $gpr = $this->getGPR($total, $first, $months);
 
         return Array(
-            'total' => $obshtaSuma,
-            'monthlyPayment' => round($monthlyPayment, 2),
+            'obhstaDuljimaSuma' => $obshtaSuma,
+            'mesechnaVnoska' => round($monthlyPayment, 2),
             'oskupqvane' => $oskupqvane,
-            'taksaOcenkaNaRiska' => $taksaOcenkaNaRiska,
-            'razmerCredit' => $razmerCredit,
-            'glp' => $glp,
-            'gpr' => $gpr,
+            'taksaOcenkaNaRiska' => round($taksaOcenkaNaRiska, 2),
+            'obhstRazmerNaKredita' => $razmerCredit,
+            'glp' => round($glp, 4),
+            'gpr' => round($gpr, 4),
         );
     }
 }
