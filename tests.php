@@ -32,7 +32,7 @@ assert (equalFloat($tbiData['oskupqvane'], 0.18));
 assert (equalFloat($tbiData['taksaOcenkaNaRiska'], 129.96));
 assert (equalFloat($tbiData['obhstRazmerNaKredita'], 1212.96));
 assert (equalFloat($tbiData['glp'], 0.0975));
-assert (equalFloat($tbiData['gpr'], 0.3564));
+assert (equalFloat($tbiData['gpr'], 0.3553));
 
 $tbiData = $tbi->calc($cenaZaKredit, $purvaVnoska, 6, $zastrahovka);
 
@@ -42,7 +42,7 @@ assert (equalFloat($tbiData['oskupqvane'], 0.09));
 assert (equalFloat($tbiData['taksaOcenkaNaRiska'], 64.98));
 assert (equalFloat($tbiData['obhstRazmerNaKredita'], 1147.98));
 assert (equalFloat($tbiData['glp'], 0.0964));
-assert (equalFloat($tbiData['gpr'], 0.3306));
+assert (equalFloat($tbiData['gpr'], 0.3295));
 
 $tbiData = $tbi->calc($cenaZaKredit, $purvaVnoska, 12, 1);
 
@@ -52,7 +52,7 @@ assert (equalFloat($tbiData['oskupqvane'], 0.18));
 assert (equalFloat($tbiData['taksaOcenkaNaRiska'], 136.04));
 assert (equalFloat($tbiData['obhstRazmerNaKredita'], 1269.73));
 assert (equalFloat($tbiData['glp'], 0.0975));
-assert (equalFloat($tbiData['gpr'], 0.3564));
+assert (equalFloat($tbiData['gpr'], 0.3553));
 
 $tbiData = $tbi->calc($cenaZaKredit, 100, 6, 2);
 
@@ -62,6 +62,6 @@ assert (equalFloat($tbiData['oskupqvane'], 0.09));
 assert (equalFloat($tbiData['taksaOcenkaNaRiska'], 60.53));
 assert (equalFloat($tbiData['obhstRazmerNaKredita'], 1069.38));
 assert (equalFloat($tbiData['glp'], 0.0964));
-assert (equalFloat($tbiData['gpr'], 0.3306));
+assert (equalFloat($tbiData['gpr'], 0.3295));
 
 echo "All tests passed, good job!\n";
