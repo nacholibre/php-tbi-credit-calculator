@@ -250,7 +250,7 @@ class TBICreditCalculator {
 
         $dates = Array();
 
-        $today = strtotime('+5 days', $today);
+        $today = strtotime('+6 days', $today);
 
         $monthlyPayments = Array();
         $dates[] = time();
